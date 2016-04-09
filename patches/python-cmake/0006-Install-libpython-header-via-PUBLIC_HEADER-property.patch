@@ -1,0 +1,103 @@
+From d5b0af91a4c8140287cad60cde05b21be6d95eaf Mon Sep 17 00:00:00 2001
+From: Marcel Metz <mmetz@adrian-broher.net>
+Date: Sat, 9 Apr 2016 21:55:56 +0200
+Subject: [PATCH] Install libpython header via PUBLIC_HEADER property
+
+---
+ cmake/include/CMakeLists.txt   |  8 +++++---
+ cmake/libpython/CMakeLists.txt | 13 +++++++++----
+ 2 files changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/cmake/include/CMakeLists.txt b/cmake/include/CMakeLists.txt
+index f75ede6..76ed003 100644
+--- a/cmake/include/CMakeLists.txt
++++ b/cmake/include/CMakeLists.txt
+@@ -3,12 +3,14 @@
+ set(includedir ${INCLUDE_BUILD_DIR})
+ file(GLOB_RECURSE hfiles RELATIVE ${includedir} "${includedir}/*")
+ 
++set(LIBPYTHON_HEADERS "")
++
+ foreach(file ${hfiles})
+     get_filename_component(path ${file} PATH)
+     if(WIN32)
+         file(COPY ${includedir}/${file} DESTINATION ${PROJECT_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/${path})
+     endif()
+-    if(INSTALL_DEVELOPMENT)
+-        install(FILES ${includedir}/${file} DESTINATION ${INCLUDE_INSTALL_DIR}/${path} COMPONENT Development)
+-    endif()
++    list(APPEND LIBPYTHON_HEADERS ${includedir}/${file})
+ endforeach()
++
++set(LIBPYTHON_HEADERS ${LIBPYTHON_HEADERS} CACHE INTERNAL "List of libpython headers" FORCE)
+diff --git a/cmake/libpython/CMakeLists.txt b/cmake/libpython/CMakeLists.txt
+index 2a2ec4a..26bb0be 100644
+--- a/cmake/libpython/CMakeLists.txt
++++ b/cmake/libpython/CMakeLists.txt
+@@ -443,7 +443,7 @@ endif()
+ 
+ # Build python libraries
+ function(add_libpython name type install component)
+-    add_library(${name} ${type} ${LIBPYTHON_SOURCES})
++    add_library(${name} ${type} ${LIBPYTHON_HEADERS} ${LIBPYTHON_SOURCES})
+     target_link_libraries(${name} ${LIBPYTHON_TARGET_LIBRARIES})
+ 
+     if(MSVC)
+@@ -458,6 +458,7 @@ function(add_libpython name type install component)
+         LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${LIBPYTHON_LIBDIR}
+         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${LIBPYTHON_LIBDIR}
+         INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/${LIBPYTHON_LIBDIR}
++        PUBLIC_HEADER "${LIBPYTHON_HEADERS}"
+     )
+     if(HAVE_POSITION_INDEPENDENT_CODE)
+         set_target_properties(${name} PROPERTIES
+@@ -473,7 +474,8 @@ function(add_libpython name type install component)
+             ARCHIVE DESTINATION ${LIBPYTHON_ARCHIVEDIR}
+             LIBRARY DESTINATION ${LIBPYTHON_LIBDIR}
+             RUNTIME DESTINATION ${LIBPYTHON_LIBDIR}
+-            COMPONENT ${component}
++            PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}
++            COMPONENT Development
+         )
+     endif()
+ endfunction()
+@@ -522,11 +524,12 @@ if(BUILD_SHARED)
+         add_custom_target(generate_libpythonstub_def DEPENDS ${pythonstub_def})
+ 
+         # Build 'python3.dll'
+-        add_library(${targetname} SHARED ${SRC_DIR}/PC/python3dll.c ${SRC_DIR}/PC/python3.def)
++        add_library(${targetname} SHARED ${LIBPYTHON_HEADERS} ${SRC_DIR}/PC/python3dll.c ${SRC_DIR}/PC/python3.def)
+         set_target_properties(${targetname} PROPERTIES
+             OUTPUT_NAME python3
+             LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${LIBPYTHON_LIBDIR}
+             RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${LIBPYTHON_LIBDIR}
++            PUBLIC_HEADER "${LIBPYTHON_HEADERS}"
+             INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/${LIBPYTHON_LIBDIR}
+         )
+         add_dependencies(${targetname} generate_libpythonstub_def)
+@@ -556,12 +559,13 @@ if(BUILD_SHARED)
+     endif()
+ 
+     if(IS_PY3 AND UNIX AND NOT APPLE)
+-        add_library(${targetname} SHARED ${PROJECT_SOURCE_DIR}/cmake/empty.c)
++        add_library(${targetname} SHARED ${LIBPYTHON_HEADERS} ${PROJECT_SOURCE_DIR}/cmake/empty.c)
+         set_target_properties(${targetname} PROPERTIES
+             LINK_FLAGS "-Wl,--no-as-needed"
+             OUTPUT_NAME python3
+             LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${LIBPYTHON_LIBDIR}
+             RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${LIBPYTHON_LIBDIR}
++            PUBLIC_HEADER "${LIBPYTHON_HEADERS}"
+             INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/${LIBPYTHON_LIBDIR}
+         )
+         target_link_libraries(${targetname} libpython-shared)
+@@ -575,6 +579,7 @@ if(BUILD_SHARED)
+             ARCHIVE DESTINATION ${LIBPYTHON_ARCHIVEDIR}
+             LIBRARY DESTINATION ${LIBPYTHON_LIBDIR}
+             RUNTIME DESTINATION ${LIBPYTHON_LIBDIR}
++            PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR} COMPONENT Development
+         )
+     endif()
+ 
+-- 
+2.7.4
+
