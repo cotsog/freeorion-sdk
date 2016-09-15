@@ -1,0 +1,28 @@
+From 9a196b240008d0e8cdeb1d596fc3e5dd21f0b192 Mon Sep 17 00:00:00 2001
+From: Marcel Metz <mmetz@adrian-broher.net>
+Date: Thu, 15 Sep 2016 16:52:21 +0200
+Subject: [PATCH] Change include order of subdirectories to guarrantee variable
+ initialization
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 19eba46..840884e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -436,9 +436,9 @@ set(extensions_disabled "" CACHE INTERNAL "" FORCE)
+ add_subdirectory(cmake/extensions CMakeBuild/extensions)
+ 
+ # Add the other subdirectories
++add_subdirectory(cmake/include CMakeBuild/include)
+ add_subdirectory(cmake/libpython CMakeBuild/libpython)
+ add_subdirectory(cmake/python CMakeBuild/python)
+-add_subdirectory(cmake/include CMakeBuild/include)
+ add_subdirectory(cmake/lib CMakeBuild/lib)
+ if(BUILD_WININST)
+     add_subdirectory(cmake/PC/bdist_wininst CMakeBuild/bdist_wininst)
+-- 
+2.7.4
+

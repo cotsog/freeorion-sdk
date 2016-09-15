@@ -204,6 +204,8 @@ ExternalProject_Add(python-cmake
         ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/python-cmake/0007-Add-Mac-OSX-framework-support.patch
     COMMAND
         ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/python-cmake/0008-Guard-libpython-target-OUTPUT-INSTALL-_NAME-properti.patch
+    COMMAND
+        ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/python-cmake/0009-Change-include-order-of-subdirectories-to-guarrantee.patch
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
