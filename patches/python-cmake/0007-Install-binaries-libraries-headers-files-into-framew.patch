@@ -1,4 +1,4 @@
-From 3d526366d28180702c4d19c1f4e784b288a061dc Mon Sep 17 00:00:00 2001
+From 4dbdd4778d97e0b8215754d14c209c6c430e473d Mon Sep 17 00:00:00 2001
 From: Marcel Metz <mmetz@adrian-broher.net>
 Date: Sat, 17 Sep 2016 21:36:45 +0200
 Subject: [PATCH] Install binaries, libraries, headers files into framework
