@@ -204,6 +204,8 @@ ExternalProject_Add(python-cmake
         ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/python-cmake/0007-Install-binaries-libraries-headers-files-into-framew.patch
     COMMAND
         ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/python-cmake/0008-Change-PYTHONPATH-and-PYTHONHOME-for-framework-build.patch
+    COMMAND
+        ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/patches/python-cmake/0009-Install-framework-into-CMAKE_INSTALL_PREFIX.patch
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
@@ -216,10 +218,10 @@ unset(SOURCE_DIR)
 
 if(WIN32)
     set(PYTHON_CONFIGURE_FLAGS "")
+    set(PYTHON_CONFIGURE_INSTALL_DIR ${SDK_INSTALL_DIR})
 else()
-    set(PYTHON_CONFIGURE_FLAGS
-        -DBUILD_FRAMEWORK=ON
-    )
+    set(PYTHON_CONFIGURE_FLAGS "-DBUILD_FRAMEWORK=ON")
+    set(PYTHON_CONFIGURE_INSTALL_DIR ${SDK_INSTALL_DIR}/Frameworks)
 endif()
 
 ExternalProject_Add(python
@@ -296,7 +298,7 @@ ExternalProject_Add(python
         #DENABLE_TKINTER=OFF
         -DENABLE_UNICODEDATA=OFF
         #DENABLE_ZLIB=OFF
-    INSTALL_DIR ${SDK_INSTALL_DIR}
+    INSTALL_DIR ${PYTHON_CONFIGURE_INSTALL_DIR}
 )
 
 if(WIN32)

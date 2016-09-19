@@ -1,0 +1,25 @@
+From 74fbe65ac5c2c5b62a5e277d35d8009003382242 Mon Sep 17 00:00:00 2001
+From: Marcel Metz <mmetz@adrian-broher.net>
+Date: Mon, 19 Sep 2016 18:48:09 +0200
+Subject: [PATCH] Install framework into CMAKE_INSTALL_PREFIX
+
+---
+ cmake/libpython/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/libpython/CMakeLists.txt b/cmake/libpython/CMakeLists.txt
+index 022114d..9218051 100644
+--- a/cmake/libpython/CMakeLists.txt
++++ b/cmake/libpython/CMakeLists.txt
+@@ -485,7 +485,7 @@ function(add_libpython name type install component)
+             ARCHIVE DESTINATION ${LIBPYTHON_ARCHIVEDIR}
+             LIBRARY DESTINATION ${LIBPYTHON_LIBDIR}
+             RUNTIME DESTINATION ${LIBPYTHON_LIBDIR}
+-            FRAMEWORK DESTINATION "Frameworks"
++            FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
+             COMPONENT ${component}
+         )
+     endif()
+-- 
+2.7.4
+
