@@ -1,0 +1,48 @@
+From c56cc197e80ea8601c45696af80bc3b3ea10aa9d Mon Sep 17 00:00:00 2001
+From: Marcel Metz <mmetz@adrian-broher.net>
+Date: Tue, 20 Sep 2016 17:07:54 +0200
+Subject: [PATCH] Install man pages and pkgconfig into Framework
+
+---
+ CMakeLists.txt | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b5f2473..429bb5f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -332,10 +332,11 @@ endif()
+ if(BUILD_FRAMEWORK)
+     set(BIN_INSTALL_DIR ${FRAMEWORK_DIR_PREFIX}/bin)
+ endif()
+-set(CONFIG_INSTALL_DIR share/${LIBPYTHON})
++set(SHARE_INSTALL_DIR share)
+ if(BUILD_FRAMEWORK)
+-    set(CONFIG_INSTALL_DIR ${FRAMEWORK_DIR_PREFIX}/share/${LIBPYTHON})
++    set(SHARE_INSTALL_DIR ${FRAMEWORK_DIR_PREFIX}/share)
+ endif()
++set(CONFIG_INSTALL_DIR ${SHARE_INSTALL_DIR}/${LIBPYTHON})
+ set(EXTENSION_INSTALL_DIR ${PYTHONHOME}/lib-dynload)
+ if(INSTALL_WINDOWS_TRADITIONAL)
+     set(EXTENSION_INSTALL_DIR DLLs)
+@@ -560,7 +561,7 @@ if(UNIX)
+                     ${PROJECT_BINARY_DIR}/Misc/python-${LIBPYTHON_VERSION}.pc
+                     ${PROJECT_BINARY_DIR}/Misc/python-${PY_VERSION_MAJOR}.pc
+                     ${PROJECT_BINARY_DIR}/Misc/python.pc
+-                DESTINATION lib/pkgconfig
++                    DESTINATION ${LIBDIR}/pkgconfig
+                 COMPONENT Development)
+     endif()
+ 
+@@ -587,7 +588,7 @@ if(UNIX)
+ 
+     # Install manual
+     if(INSTALL_MANUAL)
+-        set(_install_man FILES ${SRC_DIR}/Misc/python.man DESTINATION share/man/man1 COMPONENT Runtime)
++        set(_install_man FILES ${SRC_DIR}/Misc/python.man DESTINATION ${SHARE_INSTALL_DIR}/man/man1 COMPONENT Runtime)
+         install(${_install_man} RENAME python${LIBPYTHON_VERSION}.1)
+         install(${_install_man} RENAME python${PY_VERSION_MAJOR}.1)
+     endif()
+-- 
+2.7.4
+
