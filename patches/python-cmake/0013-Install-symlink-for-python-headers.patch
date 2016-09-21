@@ -1,0 +1,45 @@
+From 639abd21a217a7c00f73402c59906fba81a4995e Mon Sep 17 00:00:00 2001
+From: Marcel Metz <mmetz@adrian-broher.net>
+Date: Wed, 21 Sep 2016 17:37:35 +0200
+Subject: [PATCH] Install symlink for python headers
+
+---
+ CMakeLists.txt               | 3 ++-
+ cmake/include/CMakeLists.txt | 7 +++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index eb4ec58..f437727 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -84,7 +84,8 @@ if(APPLE)
+   if(BUILD_FRAMEWORK)
+       set(BUILD_LIBPYTHON_SHARED ON CACHE BOOL "Forced to ON because of BUILD_FRAMEWORK=ON" FORCE)
+   endif()
+-  set(FRAMEWORK_DIR_PREFIX Python.framework/Versions/${PY_VERSION_MAJOR}.${PY_VERSION_MINOR})
++  set(FRAMEWORK_DIR_ROOT Python.framework)
++  set(FRAMEWORK_DIR_PREFIX ${FRAMEWORK_DIR_ROOT}/Versions/${PY_VERSION_MAJOR}.${PY_VERSION_MINOR})
+ else()
+   set(BUILD_FRAMEWORK OFF)
+ endif()
+diff --git a/cmake/include/CMakeLists.txt b/cmake/include/CMakeLists.txt
+index 2fd7b5a..bf09ae4 100644
+--- a/cmake/include/CMakeLists.txt
++++ b/cmake/include/CMakeLists.txt
+@@ -16,6 +16,13 @@ if(INSTALL_DEVELOPMENT AND BUILD_FRAMEWORK)
+     install(CODE "
+         execute_process(
+             COMMAND
++            ${CMAKE_EXECUTABLE} -E create_symlink \"Versions/Current/Headers\" Headers
++            WORKING_DIRECTORY
++                \"${CMAKE_INSTALL_PREFIX}/${FRAMEWORK_DIR_ROOT}\"
++        )
++
++        execute_process(
++            COMMAND
+                 ${CMAKE_EXECUTABLE} -E create_symlink \"${REL_INCLUDE_INSTALL_DIR}\" Headers
+             WORKING_DIRECTORY
+                 \"${CMAKE_INSTALL_PREFIX}/${FRAMEWORK_DIR_PREFIX}\"
+-- 
+2.7.4
+
