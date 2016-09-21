@@ -1,0 +1,43 @@
+From 3db34dca943adda63ab3800b99567dbb0bd3ff5f Mon Sep 17 00:00:00 2001
+From: Marcel Metz <mmetz@adrian-broher.net>
+Date: Wed, 21 Sep 2016 17:37:35 +0200
+Subject: [PATCH] Install symlink for python headers
+
+---
+ CMakeLists.txt               |  1 +
+ cmake/include/CMakeLists.txt | 10 ++++++++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 429bb5f..eb4ec58 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -347,6 +347,7 @@ if(MSVC)
+     set(INCLUDE_INSTALL_DIR include/python${PY_VERSION_MAJOR}.${PY_VERSION_MINOR})
+ endif()
+ if(BUILD_FRAMEWORK)
++    set(REL_INCLUDE_INSTALL_DIR include/python${PY_VERSION_MAJOR}.${PY_VERSION_MINOR})
+     set(INCLUDE_INSTALL_DIR ${FRAMEWORK_DIR_PREFIX}/include/python${PY_VERSION_MAJOR}.${PY_VERSION_MINOR})
+ endif()
+ # Build tree directory
+diff --git a/cmake/include/CMakeLists.txt b/cmake/include/CMakeLists.txt
+index f75ede6..2fd7b5a 100644
+--- a/cmake/include/CMakeLists.txt
++++ b/cmake/include/CMakeLists.txt
+@@ -12,3 +12,13 @@ foreach(file ${hfiles})
+         install(FILES ${includedir}/${file} DESTINATION ${INCLUDE_INSTALL_DIR}/${path} COMPONENT Development)
+     endif()
+ endforeach()
++if(INSTALL_DEVELOPMENT AND BUILD_FRAMEWORK)
++    install(CODE "
++        execute_process(
++            COMMAND
++                ${CMAKE_EXECUTABLE} -E create_symlink \"${REL_INCLUDE_INSTALL_DIR}\" Headers
++            WORKING_DIRECTORY
++                \"${CMAKE_INSTALL_PREFIX}/${FRAMEWORK_DIR_PREFIX}\"
++        )
++    ")
++endif()
+-- 
+2.7.4
+
