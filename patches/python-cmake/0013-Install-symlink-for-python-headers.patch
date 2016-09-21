@@ -1,12 +1,12 @@
-From 639abd21a217a7c00f73402c59906fba81a4995e Mon Sep 17 00:00:00 2001
+From b6c9bab5ddc6f973cdeb2317cfc23d53d71ec41c Mon Sep 17 00:00:00 2001
 From: Marcel Metz <mmetz@adrian-broher.net>
 Date: Wed, 21 Sep 2016 17:37:35 +0200
 Subject: [PATCH] Install symlink for python headers
 
 ---
- CMakeLists.txt               | 3 ++-
- cmake/include/CMakeLists.txt | 7 +++++++
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ CMakeLists.txt               |  3 ++-
+ cmake/include/CMakeLists.txt | 12 ++++++++++--
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index eb4ec58..f437727 100644
@@ -23,23 +23,31 @@ index eb4ec58..f437727 100644
    set(BUILD_FRAMEWORK OFF)
  endif()
 diff --git a/cmake/include/CMakeLists.txt b/cmake/include/CMakeLists.txt
-index 2fd7b5a..bf09ae4 100644
+index 2fd7b5a..90a5be9 100644
 --- a/cmake/include/CMakeLists.txt
 +++ b/cmake/include/CMakeLists.txt
-@@ -16,6 +16,13 @@ if(INSTALL_DEVELOPMENT AND BUILD_FRAMEWORK)
+@@ -12,11 +12,19 @@ foreach(file ${hfiles})
+         install(FILES ${includedir}/${file} DESTINATION ${INCLUDE_INSTALL_DIR}/${path} COMPONENT Development)
+     endif()
+ endforeach()
+-if(INSTALL_DEVELOPMENT AND BUILD_FRAMEWORK)
++if(BUILD_FRAMEWORK)
      install(CODE "
++        message(STATUS \"Creating Python header framework symlinks...\")
          execute_process(
              COMMAND
-+            ${CMAKE_EXECUTABLE} -E create_symlink \"Versions/Current/Headers\" Headers
+-                ${CMAKE_EXECUTABLE} -E create_symlink \"${REL_INCLUDE_INSTALL_DIR}\" Headers
++                \${CMAKE_EXECUTABLE} -E create_symlink \"Versions/Current/Headers\" Headers
 +            WORKING_DIRECTORY
 +                \"${CMAKE_INSTALL_PREFIX}/${FRAMEWORK_DIR_ROOT}\"
 +        )
 +
 +        execute_process(
 +            COMMAND
-                 ${CMAKE_EXECUTABLE} -E create_symlink \"${REL_INCLUDE_INSTALL_DIR}\" Headers
++                \${CMAKE_EXECUTABLE} -E create_symlink \"${REL_INCLUDE_INSTALL_DIR}\" Headers
              WORKING_DIRECTORY
                  \"${CMAKE_INSTALL_PREFIX}/${FRAMEWORK_DIR_PREFIX}\"
+         )
 -- 
 2.7.4
 
