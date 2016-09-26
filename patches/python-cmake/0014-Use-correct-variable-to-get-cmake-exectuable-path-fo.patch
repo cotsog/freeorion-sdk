@@ -1,0 +1,34 @@
+From 3555f4573c3e34268ab8ea4ef63545fff9752f47 Mon Sep 17 00:00:00 2001
+From: Marcel Metz <mmetz@adrian-broher.net>
+Date: Mon, 26 Sep 2016 23:48:11 +0200
+Subject: [PATCH] Use correct variable to get cmake exectuable path for command
+ mode
+
+---
+ cmake/include/CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/cmake/include/CMakeLists.txt b/cmake/include/CMakeLists.txt
+index 90a5be9..e14bb19 100644
+--- a/cmake/include/CMakeLists.txt
++++ b/cmake/include/CMakeLists.txt
+@@ -17,14 +17,14 @@ if(BUILD_FRAMEWORK)
+         message(STATUS \"Creating Python header framework symlinks...\")
+         execute_process(
+             COMMAND
+-                \${CMAKE_EXECUTABLE} -E create_symlink \"Versions/Current/Headers\" Headers
++                \${CMAKE_COMMAND} -E create_symlink Versions/Current/Headers Headers
+             WORKING_DIRECTORY
+                 \"${CMAKE_INSTALL_PREFIX}/${FRAMEWORK_DIR_ROOT}\"
+         )
+ 
+         execute_process(
+             COMMAND
+-                \${CMAKE_EXECUTABLE} -E create_symlink \"${REL_INCLUDE_INSTALL_DIR}\" Headers
++                \${CMAKE_COMMAND} -E create_symlink \"${REL_INCLUDE_INSTALL_DIR}\" Headers
+             WORKING_DIRECTORY
+                 \"${CMAKE_INSTALL_PREFIX}/${FRAMEWORK_DIR_PREFIX}\"
+         )
+-- 
+2.7.4
+
